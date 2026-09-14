@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haggle Beat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #191221;
+    --panel: #241A30;
+    --panel-edge: #3A2C4B;
+    --brass: #C9A24B;
+    --brass-bright: #E8C874;
+    --rose: #8B4A52;
+    --rose-bright: #C97684;
+    --parchment: #EFE6D8;
+    --ink-dim: #A79BB0;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at top, #221934 0%, var(--bg) 60%);
+    color: var(--parchment);
+    font-family: 'Karla', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .stall{
+    width: min(440px, 92vw);
+    padding: 28px 26px 30px;
+    background: linear-gradient(180deg, #2A1F3D, #221934);
+    border: 1px solid var(--panel-edge);
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .stall::before{
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(201,162,75,0.25);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 28px;
+    margin: 0 0 2px;
+    letter-spacing: 0.2px;
+  }
+
+  .tagline{
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin: 0 0 22px;
+    line-height: 1.5;
+  }
+
+  .row{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .label{
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-transform: lowercase;
+  }
+
+  .price{
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--brass-bright);
+    line-height: 1;
+  }
+
+  .price-row{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .round-count{
+    font-size: 13px;
+    color: var(--ink-dim);
+  }
+
+  .mood-track{
+    height: 8px;
+    background: #150F1E;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 26px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .mood-fill{
+    height: 100%;
+    width: 60%;
+    background: linear-gradient(90deg, var(--rose), var(--brass));
+    transition: width 0.35s ease;
+  }
+
+  .beat-wrap{
+    position: relative;
+    height: 64px;
+    margin-bottom: 22px;
+  }
+
+  .beat-track{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(239,230,216,0.14);
+    transform: translateY(-50%);
+  }
+
+  .hit-zone{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 18%;
+    background: rgba(201,162,75,0.14);
+    border-left: 2px dashed rgba(201,162,75,0.45);
+  }
+
+  .marker{
+    position: absolute;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    margin-top: -11px;
+    margin-left: -11px;
+    border-radius: 50%;
+    background: var(--brass-bright);
+    box-shadow: 0 0 14px rgba(232,200,116,0.6);
+    left: 0%;
+  }
+
+  .call{
+    position: absolute;
+    top: -24px;
+    right: 0;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    color: var(--ink-dim);
+    height: 18px;
+  }
+
+  .call.perfect{ color: var(--brass-bright); }
+  .call.good{ color: var(--parchment); }
+  .call.miss{ color: var(--rose-bright); }
+
+  .offers{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  button.offer{
+    font-family: 'Karla', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 6px;
+    background: transparent;
+    color: var(--parchment);
+    border: 1px solid var(--panel-edge);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.08s ease, background 0.15s ease;
+  }
+
+  button.offer small{
+    display: block;
+    font-weight: 400;
+    font-size: 10px;
+    color: var(--ink-dim);
+    margin-top: 3px;
+  }
+
+  button.offer:hover{ border-color: var(--brass); background: rgba(201,162,75,0.06); }
+  button.offer:active{ transform: scale(0.97); }
+  button.offer:focus-visible{ outline: 2px solid var(--brass-bright); outline-offset: 2px; }
+  button.offer:disabled{ opacity: 0.35; cursor: default; }
+
+  .footline{
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-align: center;
+    min-height: 16px;
+  }
+
+  .start-overlay{
+    position: absolute;
+    inset: 0;
+    background: rgba(25,18,33,0.94);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .start-overlay p{
+    color: var(--ink-dim);
+    font-size: 13px;
+    max-width: 320px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  button.primary{
+    font-family: 'Karla', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 26px;
+    background: var(--brass);
+    color: #1D1522;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  button.primary:hover{ background: var(--brass-bright); }
+
+  .hidden{ display: none !important; }
+
+  @media (prefers-reduced-motion: reduce){
+    .marker{ transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stall" id="stall">
+
+  <h1>The Brass Lamp</h1>
+  <p class="tagline">Time your offer to the merchant's tempo. Land it in the zone — too eager or too slow and they'll feel it.</p>
+
+  <div class="price-row">
+    <div>
+      <div class="label">asking price</div>
+      <div class="price" id="priceEl">100</div>
+    </div>
+    <div class="round-count" id="roundEl">round 1 / 8</div>
+  </div>
+
+  <div class="label" style="margin-bottom:6px;">merchant's mood</div>
+  <div class="mood-track"><div class="mood-fill" id="moodFill"></div></div>
+
+  <div class="beat-wrap">
+    <div class="call" id="callEl"></div>
+    <div class="beat-track"></div>
+    <div class="hit-zone"></div>
+    <div class="marker" id="marker"></div>
+  </div>
+
+  <div class="offers">
+    <button class="offer" id="btnLow" disabled>Lowball<small>big drop, risky</small></button>
+    <button class="offer" id="btnFair" disabled>Fair Offer<small>balanced</small></button>
+    <button class="offer" id="btnHigh" disabled>Generous<small>safe, small drop</small></button>
+  </div>
+
+  <div class="footline" id="footline">tap in the gold zone, right as the bead reaches the wall</div>
+
+  <div class="start-overlay" id="overlay">
+    <p>The stallkeeper taps a steady beat while you haggle. Press an offer right as the bead hits the gold zone — dead on for the best price, off-beat and they'll bristle.</p>
+    <button class="primary" id="startBtn">Start Haggling</button>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  const BPM = 96;
+  const beatMs = 60000 / BPM;
+  const MAX_ROUNDS = 8;
+  const WIN_PRICE = 40;
+
+  let audioCtx = null;
+  let startTime = 0;
+  let price = 100;
+  let mood = 60;
+  let round = 1;
+  let running = false;
+  let lastTickBeat = -1;
+
+  const priceEl = document.getElementById('priceEl');
+  const moodFill = document.getElementById('moodFill');
+  const roundEl = document.getElementById('roundEl');
+  const marker = document.getElementById('marker');
+  const callEl = document.getElementById('callEl');
+  const footline = document.getElementById('footline');
+  const overlay = document.getElementById('overlay');
+  const startBtn = document.getElementById('startBtn');
+  const btns = {
+    low: document.getElementById('btnLow'),
+    fair: document.getElementById('btnFair'),
+    high: document.getElementById('btnHigh'),
+  };
+
+  const OFFERS = {
+    low:  { label: 'Lowball',   perfect: [-18,  5], good: [-10, -5], miss: [-2, -20] },
+    fair: { label: 'Fair Offer',perfect: [-12, 10], good: [-8,   2], miss: [-4, -10] },
+    high: { label: 'Generous',  perfect: [-6,  15], good: [-5,   8], miss: [-3,  -5] },
+  };
+
+  function playTick(strong){
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = strong ? 880 : 660;
+    gain.gain.setValueAtTime(strong ? 0.18 : 0.1, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.09);
+  }
+
+  function playResult(quality){
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = quality === 'miss' ? 'sawtooth' : 'triangle';
+    const freqs = { perfect: 1046, good: 784, miss: 220 };
+    osc.frequency.value = freqs[quality];
+    gain.gain.setValueAtTime(0.15, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + (quality === 'miss' ? 0.25 : 0.15));
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.3);
+  }
+
+  function updateUI(){
+    priceEl.textContent = Math.max(price, 0).toFixed(0);
+    moodFill.style.width = Math.max(0, Math.min(100, mood)) + '%';
+    roundEl.textContent = `round ${Math.min(round, MAX_ROUNDS)} / ${MAX_ROUNDS}`;
+  }
+
+  function setButtonsEnabled(on){
+    Object.values(btns).forEach(b => b.disabled = !on);
+  }
+
+  function loop(){
+    if (!running) return;
+    const now = audioCtx.currentTime * 1000;
+    const elapsed = now - startTime;
+    const phase = (elapsed % beatMs) / beatMs; // 0 -> 1
+    marker.style.left = (phase * 100) + '%';
+
+    const currentBeat = Math.floor(elapsed / beatMs);
+    if (currentBeat !== lastTickBeat){
+      lastTickBeat = currentBeat;
+      playTick(currentBeat % 4 === 0);
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  function judge(){
+    const now = audioCtx.currentTime * 1000;
+    const elapsed = now - startTime;
+    const nearestBeat = Math.round(elapsed / beatMs) * beatMs;
+    const delta = elapsed - nearestBeat; // negative = early, positive = late
+    const abs = Math.abs(delta);
+    if (abs <= 55) return { quality: 'perfect', delta };
+    if (abs <= 150) return { quality: 'good', delta };
+    return { quality: 'miss', delta };
+  }
+
+  function showCall(quality, delta){
+    callEl.className = 'call ' + quality;
+    if (quality === 'perfect') callEl.textContent = 'dead on beat';
+    else if (quality === 'good') callEl.textContent = delta < 0 ? 'a touch early' : 'a touch late';
+    else callEl.textContent = delta < 0 ? 'way too early' : 'way too late';
+  }
+
+  function makeOffer(kind){
+    if (!running) return;
+    const { quality, delta } = judge();
+    const [priceDelta, moodDelta] = OFFERS[kind][quality];
+
+    price = Math.max(0, price + priceDelta);
+    mood = Math.max(0, Math.min(100, mood + moodDelta));
+    updateUI();
+    showCall(quality, delta);
+    playResult(quality);
+
+    round += 1;
+
+    if (mood <= 0){
+      endGame(false, "The merchant waves you off — try landing your offers closer to the beat next time.");
+      return;
+    }
+    if (price <= WIN_PRICE){
+      endGame(true, `Deal! You talked the lamp down to ${Math.round(price)} coins.`);
+      return;
+    }
+    if (round > MAX_ROUNDS){
+      const won = price < 70;
+      endGame(won, won
+        ? `Time's up. Final price: ${Math.round(price)} coins — a fair haggle.`
+        : `Time's up. Final price: ${Math.round(price)} coins — you left coins on the table.`);
+      return;
+    }
+  }
+
+  function endGame(won, message){
+    running = false;
+    setButtonsEnabled(false);
+    footline.textContent = message;
+    overlay.querySelector('p').textContent = message;
+    startBtn.textContent = 'Haggle Again';
+    overlay.classList.remove('hidden');
+  }
+
+  function startGame(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    price = 100;
+    mood = 60;
+    round = 1;
+    lastTickBeat = -1;
+    updateUI();
+    callEl.textContent = '';
+    footline.textContent = 'tap in the gold zone, right as the bead reaches the wall';
+
+    overlay.classList.add('hidden');
+    setButtonsEnabled(true);
+    running = true;
+    startTime = audioCtx.currentTime * 1000;
+    requestAnimationFrame(loop);
+  }
+
+  startBtn.addEventListener('click', startGame);
+  btns.low.addEventListener('click', () => makeOffer('low'));
+  btns.fair.addEventListener('click', () => makeOffer('fair'));
+  btns.high.addEventListener('click', () => makeOffer('high'));
+
+  document.addEventListener('keydown', (e) => {
+    if (!running) return;
+    if (e.key === '1') makeOffer('low');
+    if (e.key === '2') makeOffer('fair');
+    if (e.key === '3') makeOffer('high');
+  });
+})();
+</script>
+
+</body>
+</html>
